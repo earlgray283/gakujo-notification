@@ -9,6 +9,8 @@ import (
 	"log"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func CrawleAssignments(repo *repository.Repository, crypto *lib.Crypto) func() {
@@ -28,18 +30,19 @@ func CrawleAssignments(repo *repository.Repository, crypto *lib.Crypto) func() {
 			tokens := strings.Split(gakujoAccount, "&")
 			id, password := tokens[0], tokens[1]
 
+			log.Println("fetching assignments from gakujo...")
 			client, err := gakujo.NewClient(context.Background(), id, password)
 			if err != nil {
 				log.Println(err)
 				return
 			}
 			defer client.Cancel()
-
 			assignments, err := client.ReportAssignments()
 			if err != nil {
 				log.Println(err)
 				return
 			}
+			log.Println("done")
 
 			repoAssignments, err := repo.UpsertAssignments(assignments)
 			if err != nil {
@@ -55,12 +58,11 @@ func CrawleAssignments(repo *repository.Repository, crypto *lib.Crypto) func() {
 			for i, assignment := range assignments {
 				repoAsmt := asmtMap[fmt.Sprintf("%s_%d", assignment.Title, assignment.Year)]
 				userAssignments[i] = &repository.UserAssignment{
+					ID:           uuid.New().String(),
 					UserID:       user.ID,
 					AssignmentID: repoAsmt.ID,
 					Status:       assignment.Status,
-					Model: repository.Model{
-						CreatedAt: time.Now(),
-					},
+					CreatedAt:    time.Now(),
 				}
 			}
 			if _, err := repo.UpsertUserAssignments(userAssignments); err != nil {
