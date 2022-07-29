@@ -9,11 +9,10 @@ import (
 
 	"gakujo-notification/lib"
 	"gakujo-notification/repository"
-	"gakujo-notification/server/worker"
 
 	"github.com/go-co-op/gocron"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	pkglogger "github.com/gofiber/fiber/v2/middleware/logger"
 	jwtware "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -25,21 +24,28 @@ type Server struct {
 	logger *log.Logger
 }
 
-func middlewareJwt() fiber.Handler {
+func middlewareJwt(signingKey []byte) fiber.Handler {
 	return jwtware.New(jwtware.Config{
-		SigningKey: os.Getenv("GAKUJO_NOTIFICATION_SIGNING_KEY"),
+		SigningKey: signingKey,
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			log.Println("!", err)
+			return fiber.DefaultErrorHandler(c, err)
+		},
 	})
 }
 
-func getUserIdFromJwtToken(jwtToken *jwt.Token) uint {
+func getUserIdFromJwtToken(jwtToken *jwt.Token) string {
 	claims := jwtToken.Claims.(jwt.MapClaims)
-	userId := claims["id"].(uint)
+	log.Println(claims)
+	userId := claims["id"].(string)
 	return userId
 }
 
 func New(logWriter io.Writer) (*Server, error) {
-	app := fiber.New()
-	app.Use(logger.New(logger.Config{Output: logWriter}))
+	if os.Getenv("GAKUJO_NOTIFICATION_SIGNING_KEY") == "" || os.Getenv("GAKUJO_NOTIFICATION_ENCRYPT_KEY") == "" {
+		return nil, errors.New("environment value GAKUJO_NOTIFICATION_* must be set")
+	}
+
 	crypto, err := lib.NewCrypto([]byte(os.Getenv("GAKUJO_NOTIFICATION_ENCRYPT_KEY")))
 	if err != nil {
 		return nil, err
@@ -52,15 +58,16 @@ func New(logWriter io.Writer) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	if os.Getenv("GAKUJO_NOTIFICATION_SIGNING_KEY") == "" {
-		return nil, errors.New("GAKUJO_NOTIFICATION_SIGNING_KEY must be set")
-	}
 	logger := log.New(logWriter, "[gakujo-notification]", log.Flags())
+
+	app := fiber.New()
+	app.Use(pkglogger.New(pkglogger.Config{Output: logWriter}))
 	srv := &Server{app, repo, crypto, logger}
 
 	srv.app.Post("/auth/signup", srv.HandleSignup)
 	srv.app.Post("/auth/signin", srv.HandleSignin)
-	srv.app.Use(middlewareJwt()).Get("/assignments", srv.HandleGetAllAssignments)
+	srv.app.Use(middlewareJwt([]byte(os.Getenv("GAKUJO_NOTIFICATION_SIGNING_KEY")))).
+		Get("/assignments", srv.HandleGetAllAssignments)
 
 	return srv, nil
 }
@@ -68,7 +75,7 @@ func New(logWriter io.Writer) (*Server, error) {
 func (srv *Server) Run(port string) error {
 	s := gocron.NewScheduler(time.Local)
 
-	s.Every(time.Hour).Do(worker.CrawleAssignments(srv.repo, srv.crypto))
+	//s.Every(time.Hour).Do(worker.CrawleAssignments(srv.repo, srv.crypto))
 	s.StartAsync()
 
 	return srv.app.Listen(":" + port)
