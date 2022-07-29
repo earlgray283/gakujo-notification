@@ -6,22 +6,68 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/Home';
 import LoginScreen from './screens/Login';
 import RegisterScreen from './screens/Register';
+import { createContext, useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Assignment } from './apis/assignment';
+import AssignmentDetail from './screens/AssignmentDetail';
 
 export type RootStackParamList = {
   Home: undefined;
   Login: undefined;
   Register: undefined;
+  AssignmentDetail: { assignment: Assignment };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const [jwtToken, setJwtToken] = useState<string | null | undefined>(
+    undefined
+  );
+  useEffect(() => {
+    (async () => {
+      try {
+        const jwtToken = await AsyncStorage.getItem('jwtToken');
+        setJwtToken(jwtToken);
+      } catch (e) {
+        await AsyncStorage.clear();
+      }
+    })();
+  }, []);
+  if (jwtToken === undefined) {
+    return (
+      <View>
+        <Text>loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login'>
-        <Stack.Screen name='Home' component={HomeScreen} />
-        <Stack.Screen name='Login' component={LoginScreen} />
-        <Stack.Screen name='Register' component={RegisterScreen} />
+      <Stack.Navigator>
+        {jwtToken ? (
+          <>
+            <Stack.Screen
+              name='Home'
+              component={HomeScreen}
+              options={() => ({
+                title: '課題一覧',
+              })}
+            />
+            <Stack.Screen
+              name='AssignmentDetail'
+              component={AssignmentDetail}
+              options={({ route }) => ({
+                title: route.params.assignment.subjectName,
+              })}
+            />
+          </>
+        ) : (
+          <>
+            <Stack.Screen name='Login' component={LoginScreen} />
+            <Stack.Screen name='Register' component={RegisterScreen} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
