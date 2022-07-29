@@ -2,25 +2,28 @@ package repository
 
 import (
 	"gakujo-notification/gakujo"
+	"time"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 type UserAssignment struct {
-	UserID       uint
+	ID           string
+	UserID       string
 	User         User
-	AssignmentID uint
+	AssignmentID string
 	Assignment   Assignment
 	Status       gakujo.AssignmentStatus
-	Model
+	CreatedAt    time.Time
+	UpdateAt     time.Time
 }
 
-func (repo *Repository) FetchAllUserAssignments(userID uint, year int) ([]*UserAssignment, error) {
+func (repo *Repository) FetchAllUserAssignments(userID string, year int) ([]*UserAssignment, error) {
 	userAssignments := make([]*UserAssignment, 0)
 	if err := repo.db.
-		Where("year = ?", year).
-		Where("user_id = ?", userID).
+		Joins("Assignment").
+		Where("user_assignments.user_id = ?", userID).
 		Find(&userAssignments).
 		Error; err != nil {
 		return nil, err
@@ -30,7 +33,9 @@ func (repo *Repository) FetchAllUserAssignments(userID uint, year int) ([]*UserA
 
 func (repo *Repository) UpsertUserAssignments(userAssignments []*UserAssignment) ([]*UserAssignment, error) {
 	if err := repo.RunInTransaction(func(tx *gorm.DB) error {
-		if err := tx.Clauses(clause.OnConflict{DoNothing: false}).Create(&userAssignments).Error; err != nil {
+		if err := tx.Clauses(clause.OnConflict{
+			DoNothing: true,
+		}).Create(&userAssignments).Error; err != nil {
 			return err
 		}
 		return nil
