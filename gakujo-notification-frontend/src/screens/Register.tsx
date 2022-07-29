@@ -122,7 +122,6 @@ function RegisterScreen(): JSX.Element {
               data.gakujoPassword
             );
             await AsyncStorage.setItem('jwtToken', jwtToken);
-            navigation.navigate('Home');
           } catch (e) {
             if (e instanceof Error) {
               setErrorMessage(e.message);

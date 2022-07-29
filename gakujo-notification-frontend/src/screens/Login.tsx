@@ -73,7 +73,6 @@ function LoginScreen(): JSX.Element {
           try {
             const jwtToken = await signin(data.username, data.password);
             await AsyncStorage.setItem('jwtToken', jwtToken);
-            navigation.navigate('Home');
           } catch (e) {
             if (e instanceof Error) {
               setErrorMessage(e.message);
