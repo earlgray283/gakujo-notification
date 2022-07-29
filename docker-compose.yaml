@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: gakujo-notification-backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - GAKUJO_NOTIFICATION_HOST=db
+      - GAKUJO_NOTIFICATION_USER=root
+      - GAKUJO_NOTIFICATION_PASSWORD=root
+      - GAKUJO_NOTIFICATION_ENCRYPT_KEY=sixteeeeeeeeeeen
+
+  db:
+    image: postgres:14.4
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=gakujo-notification
