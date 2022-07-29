@@ -2,23 +2,26 @@ package repository
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type User struct {
+	ID                     string
 	Username               string `json:"username" gorm:"unique"`
 	EncryptedPassword      string `json:"-"`
 	EncryptedGakujoAccount string `json:"-"` // {id}&{password}
-	Model                  `json:"-"`
+	CreatedAt              time.Time
+	UpdatedAt              time.Time
 }
 
 func NewUser(username, encryptedPassword, encryptedGakujoAccount string) *User {
 	return &User{
+		ID:                     uuid.New().String(),
 		Username:               username,
 		EncryptedPassword:      encryptedPassword,
 		EncryptedGakujoAccount: encryptedGakujoAccount,
-		Model: Model{
-			CreatedAt: time.Now(),
-		},
+		CreatedAt:              time.Now(),
 	}
 }
 
