@@ -5,7 +5,7 @@ export async function signin(
   username: string,
   password: string
 ): Promise<string> {
-  const data = new URLSearchParams();
+  const data = new FormData();
   data.append('username', username);
   data.append('password', password);
   const resp = await http.post('/auth/signin', data);
@@ -18,11 +18,15 @@ export async function signup(
   gakujoId: string,
   gakujoPassword: string
 ): Promise<string> {
-  const data = new URLSearchParams();
+  const data = new FormData();
   data.append('username', username);
   data.append('password', password);
   data.append('gakujoId', gakujoId);
   data.append('gakujoPassword', gakujoPassword);
-  const resp = await http.post('/auth/signup', data);
+  const resp = await http.post('/auth/signup', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
   return resp.data;
 }
