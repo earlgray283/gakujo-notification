@@ -1,4 +1,4 @@
-import { http } from 'libs/axios';
+import { http } from '../libs/axios';
 
 export interface Assignment {
   kind: string;
@@ -10,15 +10,10 @@ export interface Assignment {
   description: string;
   message: string;
   year: number;
+  status: string;
 }
 
-export async function fetchAssignments(
-  jwtToken: string
-): Promise<Assignment[]> {
-  const resp = await http.get('/assignments', {
-    headers: {
-      Authorization: `Bearer ${jwtToken}`,
-    },
-  });
+export async function fetchAssignments(): Promise<Assignment[]> {
+  const resp = await http.get('/assignments');
   return resp.data;
 }

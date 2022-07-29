@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, { AxiosResponse } from 'axios';
 
 export const http = axios.create({
@@ -22,6 +23,14 @@ export const http = axios.create({
     }
     return data;
   },
+});
+http.interceptors.request.use(async (config) => {
+  const jwtToken = await AsyncStorage.getItem('jwtToken');
+  console.log(jwtToken);
+  if (jwtToken && config.headers) {
+    config.headers.Authorization = `Bearer ${jwtToken}`;
+  }
+  return config;
 });
 
 export async function postJson<
