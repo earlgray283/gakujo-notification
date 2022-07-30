@@ -100,3 +100,18 @@ $ yarn start
 **ER図**
 
 <img width="500" alt="Screen Shot 2022-07-30 at 13 06 40" src="https://user-images.githubusercontent.com/43411965/181871744-9f21fd2f-b8b1-4f6b-85b4-cfe530af1f40.png">
+
+## 使い方
+
+1. 登録
+
+register をタップして、username, password, gakujoId, gakujoPassword を埋めてください。
+
+<img width="300" alt="Screen Shot 2022-07-30 at 13 31 52" src="https://user-images.githubusercontent.com/43411965/181872445-051b49e8-7069-431c-8058-b3ecc293c84b.png">
+
+2. ログイン
+
+3. 課題一覧
+
+<img width="300" alt="Screen Shot 2022-07-30 at 12 46 31" src="https://user-images.githubusercontent.com/43411965/181871245-4e8c4932-2c2c-442a-a05c-46aefea4b0f4.png">
+<img width="300" alt="Screen Shot 2022-07-30 at 12 46 49" src="https://user-images.githubusercontent.com/43411965/181871255-5d83d92e-7f5a-4dfa-95bd-3fa031376fb5.png">
