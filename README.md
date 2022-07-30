@@ -8,6 +8,29 @@
 <img width="300" alt="Screen Shot 2022-07-30 at 12 46 49" src="https://user-images.githubusercontent.com/43411965/181871255-5d83d92e-7f5a-4dfa-95bd-3fa031376fb5.png">
 <img width="300" src=https://user-images.githubusercontent.com/43411965/181871941-f4b13f81-f310-4ad5-bfb1-e9bb831e24d4.gif />
 
+## テスト
+
+**ネットワークプログラミングの本質部分です**
+
+**0. gakujo-notification-backend/.env の作成**
+
+```
+GAKUJO_ID=学情のid
+GAKUJO_PASSWORD=学情のパスワード
+```
+
+
+**1. 未提出課題一覧のクローリング/スクレイピング**
+
+```shell
+$ go test -timeout 30s -run ^TestAssignments$ gakujo-notification/gakujo -v -count=1
+
+=== RUN   TestAssignments
+ネットワークプログラミング（1クラス） 最終レポート
+.
+.
+```
+
 ## ビルド手順
 
 ### Requirements
@@ -15,6 +38,7 @@
 括弧内は開発環境でのバージョンです
 
 - Docker(20.10.17): https://www.docker.com/get-started/
+- Go(1.18.2): https://go.dev/dl/
 - nodejs(v16.16.0): https://nodejs.org/ja/
 - npm(8.11.0): https://www.npmjs.com/
 - yarn(1.22.19): https://yarnpkg.com/
