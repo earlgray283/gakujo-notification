@@ -6,7 +6,7 @@
 
 <img width="300" alt="Screen Shot 2022-07-30 at 12 46 31" src="https://user-images.githubusercontent.com/43411965/181871245-4e8c4932-2c2c-442a-a05c-46aefea4b0f4.png">
 <img width="300" alt="Screen Shot 2022-07-30 at 12 46 49" src="https://user-images.githubusercontent.com/43411965/181871255-5d83d92e-7f5a-4dfa-95bd-3fa031376fb5.png">
-<video width="300" src=https://user-images.githubusercontent.com/43411965/181871262-ccd8071f-23c0-4784-af5c-cc68ef199534.mov />
+<img width="300" src=https://user-images.githubusercontent.com/43411965/181871941-f4b13f81-f310-4ad5-bfb1-e9bb831e24d4.gif />
 
 ## ビルド手順
 
