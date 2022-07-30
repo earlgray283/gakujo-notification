@@ -10,7 +10,7 @@ services:
       - "8080:8080"
     environment:
       - GAKUJO_NOTIFICATION_ENCRYPT_KEY=amazingmightyyyy
-      - GAKUJO_NOTIFICATION_HOST=localhost
+      - GAKUJO_NOTIFICATION_HOST=db
       - GAKUJO_NOTIFICATION_USER=root
       - GAKUJO_NOTIFICATION_PASSWORD=root
       - GAKUJO_NOTIFICATION_SIGNING_KEY=signingkey
