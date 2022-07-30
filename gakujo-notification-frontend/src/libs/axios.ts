@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, { AxiosResponse } from 'axios';
+import { API_URL } from '@env';
 
 export const http = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: API_URL,
   withCredentials: true,
   transformResponse: (data) => {
     if (typeof data === 'string') {
