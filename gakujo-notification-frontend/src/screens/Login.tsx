@@ -2,11 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { fetchAssignments } from '../apis/assignment';
-import { RootStackParamList } from 'App';
+import { jwtTokenDispatchContext, RootStackParamList } from '../App';
 import { Controller, useForm } from 'react-hook-form';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { signin } from '../apis/auth';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 interface LoginInput {
   username: string;
@@ -14,6 +14,7 @@ interface LoginInput {
 }
 
 function LoginScreen(): JSX.Element {
+  const setJwtToken = useContext(jwtTokenDispatchContext);
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const { handleSubmit, control } = useForm<LoginInput>();
   const navigation =
@@ -73,6 +74,7 @@ function LoginScreen(): JSX.Element {
           try {
             const jwtToken = await signin(data.username, data.password);
             await AsyncStorage.setItem('jwtToken', jwtToken);
+            setJwtToken(jwtToken);
           } catch (e) {
             if (e instanceof Error) {
               setErrorMessage(e.message);

@@ -2,11 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { fetchAssignments } from '../apis/assignment';
-import { RootStackParamList } from 'App';
+import { jwtTokenDispatchContext, RootStackParamList } from '../App';
 import { Controller, useForm } from 'react-hook-form';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { signin, signup } from '../apis/auth';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 interface RegisterInput {
   username: string;
@@ -22,8 +22,7 @@ function RegisterScreen(): JSX.Element {
     control,
     formState: { errors },
   } = useForm<RegisterInput>();
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList, 'Home'>>();
+  const setJwtToken = useContext(jwtTokenDispatchContext);
 
   return (
     <View>
@@ -122,6 +121,7 @@ function RegisterScreen(): JSX.Element {
               data.gakujoPassword
             );
             await AsyncStorage.setItem('jwtToken', jwtToken);
+            setJwtToken(jwtToken);
           } catch (e) {
             if (e instanceof Error) {
               setErrorMessage(e.message);
